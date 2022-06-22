@@ -1,4 +1,5 @@
-#![cfg_attr(not(test), no_std)]
+#![no_std]
+
 use sx12xx_sys::*;
 
 extern crate libm;
@@ -205,10 +206,10 @@ impl Sx12xx {
         &mut self.rx_buffer
     }
 
-    pub fn send(&mut self, buffer: &mut [u8]) {
+    pub fn send(&mut self, buffer: &[u8]) {
         unsafe {
             if let Some(send) = self.radio.c_handle.Send {
-                send(buffer.as_mut_ptr(), buffer.len() as u8);
+                send(buffer.as_ptr() as *mut _, buffer.len() as u8);
             }
         };
     }

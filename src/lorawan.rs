@@ -30,11 +30,11 @@ impl LorawanRadio {
         }
     }
 
-    pub fn set_rx_window_offset_ms(&mut self, rx_window_offset_ms: i32)  {
+    pub fn set_rx_window_offset_ms(&mut self, rx_window_offset_ms: i32) {
         self.rx_window_offset_ms = rx_window_offset_ms;
     }
 
-    pub fn set_rx_window_duration_ms(&mut self, rx_window_duration_ms: u32)  {
+    pub fn set_rx_window_duration_ms(&mut self, rx_window_duration_ms: u32) {
         self.rx_window_duration_ms = rx_window_duration_ms;
     }
 
@@ -101,7 +101,7 @@ impl Idle {
                     tx_config.rf.coding_rate.into(),
                 );
                 let len = buf.len();
-                sx12xx.send(buf[..len].as_mut());
+                sx12xx.send(&buf[..len]);
                 (State::Txing(self.into()), Ok(LoraResponse::Txing))
             }
             LoraEvent::RxRequest(config) => {
@@ -183,14 +183,12 @@ impl Rxing {
     }
 }
 
-use heapless::{consts::*, Vec};
-
 impl lorawan_device::radio::PhyRxTx for LorawanRadio {
     type PhyEvent = super::Event;
     type PhyResponse = super::Response;
     type PhyError = super::Error;
 
-    fn get_received_packet(&mut self) -> &mut Vec<u8, U256> {
+    fn get_received_packet(&mut self) -> &mut [u8] {
         self.sx12xx.get_rx()
     }
 
